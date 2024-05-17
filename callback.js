@@ -60,22 +60,6 @@ const CLIENT_SECRET = CLIENT_SECRET1 + CLIENT_SECRET2 + CLIENT_SECRET3 + CLIENT_
             const data = await response.json();
             return data;
         }
-async function getCharacterId(accessToken) {
-    const verifyUrl = 'https://esi.evetech.net/latest/verify/';
-    const response = await fetch(verifyUrl, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.CharacterID;
-}
-
 async function main() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
@@ -83,9 +67,6 @@ async function main() {
     if (code) {
         try {
             const accessToken = await getAccessToken(code);
-            const characterId = await getCharacterId(accessToken);
-            console.log('Character ID:', characterId);
-            // Continue with fetching player location or any other operations
         } catch (error) {
             console.error('Error:', error);
             // Handle error
