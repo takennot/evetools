@@ -36,11 +36,28 @@ async function getAccessToken(code) {
     return data.access_token;
 }
 
-async function getPlayerLocation(accessToken) {
-    const characterIdUrl = 'https://esi.evetech.net/latest/characters/2118039294/location/'; // Replace with the actual character ID endpoint
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Optional CORS proxy
+async function getCharacterId(accessToken) {
+    const verifyUrl = 'https://esi.evetech.net/latest/verify/';
 
-    const response = await fetch(proxyUrl + characterIdUrl, {
+    const response = await fetch(verifyUrl, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.CharacterID;
+}
+
+async function getPlayerLocation(accessToken) {
+    const characterId = await getCharacterId(accessToken);
+    const characterIdUrl = `https://esi.evetech.net/latest/characters/${characterId}/location/`;
+
+    const response = await fetch(characterIdUrl, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'X-Requested-With': 'XMLHttpRequest' // Custom header
