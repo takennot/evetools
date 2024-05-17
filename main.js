@@ -1,5 +1,5 @@
 const CLIENT_ID = 'aaae58b7e1d34d6fad4f30d8736fbb83'; // Client ID (from EVE Dev)
-const REDIRECT_URI = 'https://takennot.github.io/evetools/callback'; // Callback URL
+const REDIRECT_URI = 'https://takennot.github.io/evetools/'; // Callback URL
 const SCOPES = 'esi-location.read_location.v1'; // required scopes
 const CLIENT_SECRET1 = 'FHfTqcW79O'; // secret key consists of 7 parts, its not secure, but at least im not storing it as-is.
 const CLIENT_SECRET2 = "ujjTo";
@@ -9,6 +9,7 @@ const CLIENT_SECRET5 = "FAKDb";
 const CLIENT_SECRET6 = "PmCvH";
 const CLIENT_SECRET7 = 'brbAr';
 const CLIENT_SECRET = CLIENT_SECRET1 + CLIENT_SECRET2 + CLIENT_SECRET3 + CLIENT_SECRET4 + CLIENT_SECRET5 + CLIENT_SECRET6 + CLIENT_SECRET7;
+
 document.getElementById('login-button').addEventListener('click', () => {
     const authUrl = `https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&client_id=${CLIENT_ID}&scope=${SCOPES}&state=${makeid()}`;
     window.location.href = authUrl;
@@ -36,11 +37,19 @@ async function getAccessToken(code) {
 }
 
 async function getPlayerLocation(accessToken) {
-    const response = await fetch('https://esi.evetech.net/latest/characters/{character_id}/location/', {
+    const characterIdUrl = 'https://esi.evetech.net/latest/characters/2118039294/location/'; // Replace with the actual character ID endpoint
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Optional CORS proxy
+
+    const response = await fetch(proxyUrl + characterIdUrl, {
         headers: {
-            'Authorization': `Bearer ${accessToken}`
+            'Authorization': `Bearer ${accessToken}`,
+            'X-Requested-With': 'XMLHttpRequest' // Custom header
         }
     });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
     const data = await response.json();
     return data;
@@ -69,8 +78,8 @@ function makeid() {
     const charactersLength = characters.length;
     let counter = 0;
     while (counter <= 5) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
     }
     return result;
 }
