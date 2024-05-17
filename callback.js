@@ -8,11 +8,16 @@ const CLIENT_SECRET5 = "FAKDb";
 const CLIENT_SECRET6 = "PmCvH";
 const CLIENT_SECRET7 = 'brbAr';
 const CLIENT_SECRET = CLIENT_SECRET1 + CLIENT_SECRET2 + CLIENT_SECRET3 + CLIENT_SECRET4 + CLIENT_SECRET5 + CLIENT_SECRET6 + CLIENT_SECRET7;
+        function base64Encode(str) {
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
         async function getAccessToken(code) {
             const url = 'https://login.eveonline.com/v2/oauth/token';
-            const auth = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const auth = base64Encode(`${CLIENT_ID}:${CLIENT_SECRET}`);
 
-            const response = await fetch(url, {
+            const response = await fetch(proxyUrl + url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -25,16 +30,27 @@ const CLIENT_SECRET = CLIENT_SECRET1 + CLIENT_SECRET2 + CLIENT_SECRET3 + CLIENT_
                 })
             });
 
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
             return data.access_token;
         }
 
         async function getPlayerLocation(accessToken) {
-            const response = await fetch('https://esi.evetech.net/latest/characters/{character_id}/location/', {
+            const characterIdUrl = 'https://esi.evetech.net/latest/characters/{character_id}/location/'; // Replace with the actual character ID endpoint
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+
+            const response = await fetch(proxyUrl + characterIdUrl, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
             const data = await response.json();
             return data;
