@@ -11,30 +11,17 @@ const CLIENT_SECRET7 = 'brbAr';
 const CLIENT_SECRET = CLIENT_SECRET1 + CLIENT_SECRET2 + CLIENT_SECRET3 + CLIENT_SECRET4 + CLIENT_SECRET5 + CLIENT_SECRET6 + CLIENT_SECRET7;
 
 document.getElementById('login-button').addEventListener('click', () => {
-    const authUrl = `https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&client_id=${CLIENT_ID}&scope=${SCOPES}&state=${makeid()}`;
+    const authUrl = `https://login.eveonline.com/v2/oauth/authorize/?response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&client_id=${CLIENT_ID}&scope=${SCOPES}&state=${makeid()}`;
     window.location.href = authUrl;
 });
 
-async function getAccessToken(code) {
-    const url = 'https://login.eveonline.com/v2/oauth/token';
-    const auth = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Basic ${auth}`
-        },
-        body: new URLSearchParams({
-            grant_type: 'authorization_code',
-            code: code,
-            redirect_uri: REDIRECT_URI
-        })
-    });
-
-    const data = await response.json();
-    return data.access_token;
+// Function to extract access token from URL fragment
+function getAccessTokenFromUrl() {
+    const fragment = window.location.hash.substring(1);
+    const params = new URLSearchParams(fragment);
+    return params.get('access_token');
 }
+
 
 async function getCharacterId(accessToken) {
     const verifyUrl = 'https://esi.evetech.net/latest/verify/';
@@ -74,12 +61,9 @@ async function getPlayerLocation(accessToken) {
 
 // Handling the callback
 window.onload = async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code) {
+    const accessToken = getAccessTokenFromUrl();
+    if (accessToken) {
         try {
-            const accessToken = await getAccessToken(code);
             const location = await getPlayerLocation(accessToken);
             document.getElementById('location').textContent = JSON.stringify(location, null, 2);
         } catch (error) {
@@ -88,6 +72,7 @@ window.onload = async () => {
         }
     }
 };
+
 
 function makeid() {
     let result = '';
