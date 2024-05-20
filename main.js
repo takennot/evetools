@@ -94,7 +94,7 @@
 				<p><strong>Name:</strong> ${characterData.name}</p>
 				<p><strong>Birthday:</strong> ${new Date(characterData.birthday).toLocaleDateString()}</p>
 				<p><strong>Gender:</strong> ${characterData.gender}</p>
-				<p><strong>Bloodline:</strong> ${characterData.bloodline_id}</p>
+				<p><strong>Bloodline:</strong> ${characterBloodline}</p>
 				<p><strong>Race:</strong> ${characterRace}</p>
 				<p><strong>Corporation:</strong> ${corporationURL ? `<a href="${corporationURL}" target="_blank">${corporationData.name}</a>` : corporationData.name}</p>
 				<p><strong>Alliance ID:</strong> ${allianceId}</p>
