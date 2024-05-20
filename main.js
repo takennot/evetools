@@ -87,7 +87,7 @@
 			}
 			// There are a bit more bloodlines in EVE, but I still dont wanna request them everytime from ESI
 			// to not make any unnecessary API calls
-			let characterBloodline = setBloodline(characterData) || "N/A";
+			let characterBloodline = await setBloodline(characterData) || "N/A";
 			// if corporationURL is a valid URL - name will be a link, otherwise just a text
 			characterInfoDiv.innerHTML = 
 			`	<h2>Character Info</h2>
