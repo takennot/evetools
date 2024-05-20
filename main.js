@@ -107,14 +107,14 @@
 		}
 	}
 
-	async function setBloodline(characterData) {
+	async function setBloodline(charData) {
 		try {
 			const response = await fetch("bloodlines.json");
 			if (!response) {
 				throw new Error("Response was not ok");
 			}
 			const bloodlines = await response.json();
-			const bloodline = bloodlines.find(bl => bl.bloodline_id === characterData.bloodline_id);
+			const bloodline = bloodlines.find(bl => bl.bloodline_id === charData.bloodline_id);
 			const charBloodlineName = bloodline ? bloodline.name : "Unknown Bloodline";
 			return charBloodlineName;
 		}
