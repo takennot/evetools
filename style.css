@@ -1,0 +1,10 @@
+    #character-info {
+      font-family: Georgia, sans-serif;
+      margin: 20px;
+    }
+    #character-info h2 {
+      margin-top: 0;
+    }
+    #character-info p {
+      margin: 5px 0;
+    }

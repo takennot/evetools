@@ -1,14 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVE Online Player Location</title>
+	<meta charset="utf-8">
+	<meta name="author" content="Ruslan Musaev">
+	<meta name="generator" content="BigBrain 1.0">
+	<meta name="robots" content="none, nosnippet">
+	<meta name="application-name" content="EVETools">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta name="description" content="Exercise 5 for WPROG1. A small set of tools for EVE Online">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="keywords" content="EVE, ESI">
+	<title>EVE Tools</title>
 </head>
 <body>
-    <h1>Get EVE Online Player Location</h1>
-    <input id="login-button" type="image" src="img/eve-sso-login-black-large.png">
-    <div id="location"></div>
-    <script src="main.js"></script>
+	<hr>
+	<h1>EVE Online Character Info</h1>
+	<input type="text" id="character-name" placeholder="Enter Character Name">
+	<button onclick="getCharacterInfo()">Get Character Info</button>
+
+	<div id="character-info"></div>
+	<hr>
+	<script src="main.js"></script>
 </body>
 </html>
