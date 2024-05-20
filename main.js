@@ -114,7 +114,7 @@
 				throw new Error("Response was not ok");
 			}
 			const bloodlines = await response.json();
-			const bloodline = bloodlines.find(bl => bl.bloodline_id === charData.bloodline_id);
+			const bloodline = await bloodlines.find(bl => bl.bloodline_id === charData.bloodline_id);
 			const charBloodlineName = bloodline ? bloodline.name : "Unknown Bloodline";
 			return charBloodlineName;
 		}
