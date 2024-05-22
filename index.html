@@ -6,20 +6,44 @@
 	<meta name="generator" content="BigBrain 1.0">
 	<meta name="robots" content="none, nosnippet">
 	<meta name="application-name" content="EVETools">
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="styles/style.css">
 	<meta name="description" content="Exercise 5 for WPROG1. A small set of tools for EVE Online">
+	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="keywords" content="EVE, ESI">
+	<script src="js/main.js" defer></script>
 	<title>EVE Tools</title>
 </head>
 <body>
-	<hr>
-	<h1>EVE Online Character Info</h1>
-	<input type="text" id="character-name" placeholder="Enter Character Name">
-	<button onclick="getCharacterInfo()">Get Character Info</button>
+	<header id="navheader">
+		<h1>EVE Tools</h1>
+			<nav>
+				<ul>
+					<li><a href="insurance.html">Insurance Profit</a></li>
+				</ul>
+			</nav>
+	</header>
+	<main>
+		<section id="mainSection">
+			<header>
+				<h1>EVE Online Character Info</h1>
+			</header>
+			<article>
+                <input type="text" id="characterName" placeholder="Enter Character Name">
+                <button id="fetchCharacterInfoButton">Get Character Info</button>
+                <div id="loadingIndicator" style="display: none;">Loading...</div>
+                <div id="characterInfo"></div>
+			</article>
+		</section>
+	</main>
 
-	<div id="character-info"></div>
-	<hr>
-	<script src="main.js"></script>
+	<footer>
+		<p>EVE Online and the EVE logo are the registered trademarks of CCP hf. 
+All rights are reserved worldwide. All other trademarks are the property of their respective owners.
+EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of CCP hf. 
+All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable features of the intellectual property relating to these trademarks are likewise the intellectual property of CCP hf. 
+CCP hf. has granted permission to takennot to use EVE Online and all associated logos and designs for promotional and information purposes on its website but does not endorse, and is not in any way affiliated with, takennot. 
+CCP is in no way responsible for the content on or functioning of this website, nor can it be liable for any damage arising from the use of this website.</p>
+	</footer>
 </body>
 </html>
