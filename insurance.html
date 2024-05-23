@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="styles/styleInsurance.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<title>EVE Insurance Fraud</title>
 </head>
 <body>
@@ -17,131 +18,142 @@
 	</header>
 	<h1>Insurance Fraud</h1>
 	<p>Warning: This is a tool to help you find opportunities to commit insurance fraud <mark>IN-GAME</mark></p>
-	<p>I ported <a href="https://github.com/skiedude/Eve-Insurance-Fraud" target="_blank">skiedude</a>'s code to JS</p>
+	<p>It can get pretty slow so have some patience!</p>
+	<p>Credits to <a id="srcLink" href="https://github.com/skiedude/Eve-Insurance-Fraud" target="_blank">skiedude</a> for code that I ported to JS & styled</p>
+	<details>
+		<summary>Instructions</summary>
+		<ul>
+			<li>Use this tool to find a ship</li>
+			<li>Fly to that region</li>
+			<li>Buy the ship(s)</li>
+			<li>Insure them with Platinum insurance</li>
+			<li><s>Go die</s> Get killed by a player or an NPC</li>
+			<li>???</li>
+			<li>Profit!</li>
+		</ul>
+	</details>
 	<label for="regionName">Enter Region Name:</label>
-	<input type="text" id="regionName" placeholder="Region Name">
-	<button onclick="fetchMarketData()">Fetch Market Data</button>
+	<input list="regions" type="text" id="regionName" placeholder="Region Name">
+	<button id="fetchButton">Fetch Market Data</button>
 
 	<div id="output"></div>
-	<aside>
-		<details>
-			<summary>List of Regions</summary>
-			<ul>
-				<li>Derelik</li>
-				<li>The Forge</li>
-				<li>Vale of the Silent</li>
-				<li>UUA-F4</li>
-				<li>Detorid</li>
-				<li>Wicked Creek</li>
-				<li>Cache</li>
-				<li>Scalding Pass</li>
-				<li>Insmother</li>
-				<li>Tribute</li>
-				<li>Great Wildlands</li>
-				<li>Curse</li>
-				<li>Malpais</li>
-				<li>Catch</li>
-				<li>Venal</li>
-				<li>Lonetrek</li>
-				<li>J7HZ-F</li>
-				<li>The Spire</li>
-				<li>A821-A</li>
-				<li>Tash-Murkon</li>
-				<li>Outer Passage</li>
-				<li>Stain</li>
-				<li>Pure Blind</li>
-				<li>Immensea</li>
-				<li>Etherium Reach</li>
-				<li>Molden Heath</li>
-				<li>Geminate</li>
-				<li>Heimatar</li>
-				<li>Impass</li>
-				<li>Sinq Laison</li>
-				<li>The Citadel</li>
-				<li>The Kalevala Expanse</li>
-				<li>Deklein</li>
-				<li>Devoid</li>
-				<li>Everyshore</li>
-				<li>The Bleak Lands</li>
-				<li>Esoteria</li>
-				<li>Oasa</li>
-				<li>Syndicate</li>
-				<li>Metropolis</li>
-				<li>Domain</li>
-				<li>Solitude</li>
-				<li>Tenal</li>
-				<li>Fade</li>
-				<li>Providence</li>
-				<li>Placid</li>
-				<li>Khanid</li>
-				<li>Querious</li>
-				<li>Cloud Ring</li>
-				<li>Kador</li>
-				<li>Cobalt Edge</li>
-				<li>Aridia</li>
-				<li>Branch</li>
-				<li>Feythabolis</li>
-				<li>Outer Ring</li>
-				<li>Fountain</li>
-				<li>Paragon Soul</li>
-				<li>Delve</li>
-				<li>Tenerifis</li>
-				<li>Omist</li>
-				<li>Period Basis</li>
-				<li>Essence</li>
-				<li>Kor-Azor</li>
-				<li>Perrigen Falls</li>
-				<li>Genesis</li>
-				<li>Verge Vendor</li>
-				<li>Black Rise</li>
-				<li>Pochven</li>
-				<li>Yasna Zakh</li>
-				<li>A-R00001</li>
-				<li>A-R00002</li>
-				<li>A-R00003</li>
-				<li>B-R00004</li>
-				<li>B-R00005</li>
-				<li>B-R00006</li>
-				<li>B-R00007</li>
-				<li>B-R00008</li>
-				<li>C-R00009</li>
-				<li>C-R00010</li>
-				<li>C-R00011</li>
-				<li>C-R00012</li>
-				<li>C-R00013</li>
-				<li>C-R00014</li>
-				<li>C-R00015</li>
-				<li>D-R00016</li>
-				<li>D-R00017</li>
-				<li>D-R00018</li>
-				<li>D-R00019</li>
-				<li>D-R00020</li>
-				<li>D-R00021</li>
-				<li>D-R00022</li>
-				<li>D-R00023</li>
-				<li>E-R00024</li>
-				<li>E-R00025</li>
-				<li>E-R00026</li>
-				<li>E-R00027</li>
-				<li>E-R00028</li>
-				<li>E-R00029</li>
-				<li>F-R00030</li>
-				<li>G-R00031</li>
-				<li>H-R00032</li>
-				<li>K-R00033</li>
-				<li>ADR01</li>
-				<li>ADR02</li>
-				<li>ADR03</li>
-				<li>ADR04</li>
-				<li>ADR05</li>
-				<li>VR-01</li>
-				<li>VR-02</li>
-				<li>VR-03</li>
-				<li>VR-04</li>
-				<li>VR-05</li>
-			</ul>
-		</details>
-	</aside>
+	<div id="loadingSpinner">
+		<div class="spinner"></div>
+	</div>
+	<datalist id="regions">
+		<option value="Derelik">
+		<option value="The Forge">
+		<option value="Vale of the Silent">
+		<option value="UUA-F4">
+		<option value="Detorid">
+		<option value="Wicked Creek">
+		<option value="Cache">
+		<option value="Scalding Pass">
+		<option value="Insmother">
+		<option value="Tribute">
+		<option value="Great Wildlands">
+		<option value="Curse">
+		<option value="Malpais">
+		<option value="Catch">
+		<option value="Venal">
+		<option value="Lonetrek">
+		<option value="J7HZ-F">
+		<option value="The Spire">
+		<option value="A821-A">
+		<option value="Tash-Murkon">
+		<option value="Outer Passage">
+		<option value="Stain">
+		<option value="Pure Blind">
+		<option value="Immensea">
+		<option value="Etherium Reach">
+		<option value="Molden Heath">
+		<option value="Geminate">
+		<option value="Heimatar">
+		<option value="Impass">
+		<option value="Sinq Laison">
+		<option value="The Citadel">
+		<option value="The Kalevala Expanse">
+		<option value="Deklein">
+		<option value="Devoid">
+		<option value="Everyshore">
+		<option value="The Bleak Lands">
+		<option value="Esoteria">
+		<option value="Oasa">
+		<option value="Syndicate">
+		<option value="Metropolis">
+		<option value="Domain">
+		<option value="Solitude">
+		<option value="Tenal">
+		<option value="Fade">
+		<option value="Providence">
+		<option value="Placid">
+		<option value="Khanid">
+		<option value="Querious">
+		<option value="Cloud Ring">
+		<option value="Kador">
+		<option value="Cobalt Edge">
+		<option value="Aridia">
+		<option value="Branch">
+		<option value="Feythabolis">
+		<option value="Outer Ring">
+		<option value="Fountain">
+		<option value="Paragon Soul">
+		<option value="Delve">
+		<option value="Tenerifis">
+		<option value="Omist">
+		<option value="Period Basis">
+		<option value="Essence">
+		<option value="Kor-Azor">
+		<option value="Perrigen Falls">
+		<option value="Genesis">
+		<option value="Verge Vendor">
+		<option value="Black Rise">
+		<option value="Pochven">
+		<option value="Yasna Zakh">
+		<option value="A-R00001">
+		<option value="A-R00002">
+		<option value="A-R00003">
+		<option value="B-R00004">
+		<option value="B-R00005">
+		<option value="B-R00006">
+		<option value="B-R00007">
+		<option value="B-R00008">
+		<option value="C-R00009">
+		<option value="C-R00010">
+		<option value="C-R00011">
+		<option value="C-R00012">
+		<option value="C-R00013">
+		<option value="C-R00014">
+		<option value="C-R00015">
+		<option value="D-R00016">
+		<option value="D-R00017">
+		<option value="D-R00018">
+		<option value="D-R00019">
+		<option value="D-R00020">
+		<option value="D-R00021">
+		<option value="D-R00022">
+		<option value="D-R00023">
+		<option value="E-R00024">
+		<option value="E-R00025">
+		<option value="E-R00026">
+		<option value="E-R00027">
+		<option value="E-R00028">
+		<option value="E-R00029">
+		<option value="F-R00030">
+		<option value="G-R00031">
+		<option value="H-R00032">
+		<option value="K-R00033">
+		<option value="ADR01">
+		<option value="ADR02">
+		<option value="ADR03">
+		<option value="ADR04">
+		<option value="ADR05">
+		<option value="VR-01">
+		<option value="VR-02">
+		<option value="VR-03">
+		<option value="VR-04">
+		<option value="VR-05">
+	</datalist>
 	<footer>
 		<p>EVE Online and the EVE logo are the registered trademarks of CCP hf. 
 All rights are reserved worldwide. All other trademarks are the property of their respective owners.

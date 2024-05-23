@@ -4,16 +4,35 @@
 	box-sizing: border-box;
 }
 
-#loadingIndicator {
-	display: none;
-	font-size: 18px;
-	color: #fff;
-	text-align: center;
-	margin: 20px 0;
+#loadingSpinner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+}
+
+.spinner {
+	border: 8px solid #f3f3f3;
+	border-top: 8px solid #8E1ED9;
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }
 
 #characterInfoDiv {
-	display: none; /* Ensure it's hidden initially for animation purposes */
+	display: none;
 }
 
 body {
@@ -27,10 +46,10 @@ body {
 	align-items: center;
 	justify-content: center;
 	color: #fff;
-	background-size: cover; /* Ensures the image covers the entire background */
-	background-attachment: fixed; /* Keeps the image fixed when scrolling */
-	background-position: center; /* Centers the image */
-	background-repeat: no-repeat; /* Prevents the image from repeating */
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: center;
+	background-repeat: no-repeat;
 	will-change: transform; /* Optimizes rendering by hinting the browser */
 	-webkit-transform: translate3d(0, 0, 0); /* Forces hardware acceleration for smoother rendering */
 	transform: translate3d(0, 0, 0); /* Forces hardware acceleration for smoother rendering */
@@ -154,7 +173,6 @@ button:hover {
 	text-decoration: underline;
 }
 
-/* Header and Navigation Styling */
 #navheader {
 	background-color: #380759;
 	color: #fff;
@@ -202,35 +220,36 @@ button:hover {
 }
 
 .character-info {
-	flex: 1 1 50%; /* Make each info section take up 50% of the width */
+	flex: 1 1 50%;
 	padding: 10px;
 	box-sizing: border-box;
 }
 
 #corporationInfo, #allianceInfo {
-	flex: 1 1 50%; /* Make each corp/alliance section take up 50% of the width */
+	flex: 1 1 50%;
 	padding: 10px;
 	box-sizing: border-box;
-	text-align: right; /* Align text to the right */
+	text-align: left;
 }
 
 #corporationName, #allianceName {
-	margin-top: 10px; /* Add margin to separate logo and text */
+	margin-top: 10px;
+	text-align: left;
 }
 
 .left-column {
-	flex: 1 1 60%; /* Left column takes 60% of the width */
+	flex: 1 1 60%;
 	padding: 10px;
 	box-sizing: border-box;
 }
 
 .right-column {
-	flex: 1 1 40%; /* Right column takes 40% of the width */
+	flex: 1 1 40%;
 	padding: 10px;
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-end; /* Align items to the right */
+	align-items: flex-end;
 }
 
 .right-column img {
@@ -245,7 +264,7 @@ button:hover {
 }
 
 .right-column p {
-	text-align: left; /* Align text to the left */
+	text-align: left;
 	overflow: hidden;
-	text-overflow: ellipsis; /* Handle overflow with ellipsis */
+	text-overflow: ellipsis;
 }

@@ -1,17 +1,18 @@
-	// second cfg
+$(document).ready(function() {
+		// Animations for the header
+	$("#navheader").hide().slideDown(1000);
+
+	// Animations for main section
+	$("#mainSection").hide().fadeIn(2000);
+	
+	const loadingSpinner = $("#loadingSpinner");
+	loadingSpinner.hide();
+
 	const config2 = {
 		ESI_USER_AGENT: "SHWRD++ (ruslan.musaev200121@gmail.com)",
-		CACHE_FILE: "cache" // This will map to localStorage
+		CACHE_FILE: "cache"
 	};
 
-	// Helper function to capitalize words
-	function capwords(str) {
-		return str.replace(/\w\S*/g, function(txt) {
-			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-		});
-	}
-
-	// Initialize storage
 	const cache = {
 		getItem: (key) => JSON.parse(localStorage.getItem(key)),
 		setItem: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
@@ -19,33 +20,38 @@
 		removeItem: (key) => localStorage.removeItem(key),
 		clear: () => localStorage.clear()
 	};
-	// func to get json
+
 	async function fetchJSON(url) {
 		const response = await fetch(url, { 
 			headers: { 
 				"User-Agent": config2.ESI_USER_AGENT 
 			}
 		});
-		if (!response.ok){
+		if (!response.ok) {
 			throw new Error("Network response was not ok");
 		}
 		return await response.json();
 	}
+
 	async function fetchMarketData() {
-		const regionNameInput = document.getElementById('regionName').value;
-		const outputElement = document.getElementById('output');
-		outputElement.innerHTML = '';
+		const regionNameInput = $("#regionName").val();
+		const outputElement = $("#output");
+
+		outputElement.fadeOut().empty();
+		loadingSpinner.show();
 
 		try {
 			const result = await runner(regionNameInput);
-			outputElement.innerHTML = result;
+			outputElement.html(result).fadeIn();
 		} 
 		catch (error) {
-			outputElement.innerHTML = `<p>Error: ${error.message}</p>`;
+			outputElement.html(`<p>Error: ${error.message}</p>`).fadeIn();
+		} 
+		finally {
+			loadingSpinner.hide();
 		}
 	}
 
-	// get sell orders for items
 	async function getMarketData(cache, r_id) {
 		try {
 			const marketEndpoint = `https://esi.evetech.net/latest/markets/${r_id}/orders/?order_type=sell`;
@@ -58,33 +64,33 @@
 				marketData = marketData.concat(pageData);
 			}
 
-		if (cache.hasKey("insurance_data")) {
-			const data = cache.getItem("insurance_data");
-			const dicter = {};
-			const typeIds = Object.keys(data);
-			marketData.forEach(entry => {
-			if (typeIds.includes(entry.type_id.toString())) {
-				if (!dicter[entry.type_id]){
-					dicter[entry.type_id] = [];
-				}
-				dicter[entry.type_id].push(entry);
+			if (cache.hasKey("insurance_data")) {
+				const data = cache.getItem("insurance_data");
+				const dicter = {};
+				const typeIds = Object.keys(data);
+				marketData.forEach(entry => {
+					if (typeIds.includes(entry.type_id.toString())) {
+						if (!dicter[entry.type_id]) {
+							dicter[entry.type_id] = [];
+						}
+						dicter[entry.type_id].push(entry);
+					}
+				});
+
+				const marketIds = Object.keys(dicter);
+				cache.setItem(`${r_id}_market_ids`, marketIds);
+
+				marketIds.forEach(m_id => {
+					const sortedId = dicter[m_id].sort((a, b) => a.price - b.price);
+					cache.setItem(`${r_id}_${m_id}`, sortedId);
+				});
 			}
-			});
-
-			const marketIds = Object.keys(dicter);
-			cache.setItem(`${r_id}_market_ids`, marketIds);
-
-			marketIds.forEach(m_id => {
-				const sortedId = dicter[m_id].sort((a, b) => a.price - b.price);
-				cache.setItem(`${r_id}_${m_id}`, sortedId);
-			});
-		}
 		} 
 		catch (e) {
 			console.error("Failed to fetch market data", e);
 		}
 	}
-	// get platinum insurance (highest level, thus highest payout)
+
 	async function getInsurance(cache) {
 		try {
 			const insuranceEndpoint = "https://esi.evetech.net/latest/insurance/prices/";
@@ -93,9 +99,9 @@
 			const platinumLevels = {};
 			data.forEach(val => {
 				val.levels.forEach(level => {
-				if (level.name === "Platinum") {
-					platinumLevels[val.type_id] = level;
-				}
+					if (level.name === "Platinum") {
+						platinumLevels[val.type_id] = level;
+					}
 				});
 			});
 
@@ -105,7 +111,7 @@
 			console.error("Failed to cache insurance data", e);
 		}
 	}
-	// get regions
+
 	async function getRegions(cache) {
 		try {
 			const regionsEndpoint = "https://esi.evetech.net/latest/universe/regions/";
@@ -124,7 +130,7 @@
 			console.error("Failed to cache regions", e);
 		}
 	}
-	// actual runner function
+
 	async function runner(reg_name) {
 		if (!cache.hasKey("insurance_data")) {
 			await getInsurance(cache);
@@ -138,10 +144,9 @@
 		let r_id;
 
 		try {
-			// Convert reg_name to lowercase for case-insensitive comparison
 			const regNameLower = reg_name.toLowerCase();
 			r_id = Object.keys(regions).find(key => regions[key].toLowerCase() === regNameLower);
-			if (!r_id){
+			if (!r_id) {
 				throw new Error();
 			}
 		} 
@@ -157,7 +162,7 @@
 				return "<p>No market data found for the specified region.</p>";
 			}
 
-			let profitableFound = false; // bool to track if any profitable ships were found
+			let profitableFound = false;
 			let html = "";
 			for (const t_id of marketIds) {
 				let totalProfit = 0;
@@ -177,7 +182,7 @@
 					let profit = (cache.getItem("insurance_data")[t_id].payout - (item.price + cache.getItem("insurance_data")[t_id].cost));
 					profit *= item.volume_remain;
 					if (profit > 0) {
-						profitableFound = true; // Set bool to true if profitable ship found
+						profitableFound = true;
 						totalProfit += profit;
 						totalVolumeRemaining += item.volume_remain;
 						maxPrice = item.price;
@@ -186,14 +191,19 @@
 						break;
 					}
 				}
-
+				const shipIconUrl = `https://images.evetech.net/types/${t_id}/render`
 				if (totalProfit > 0) {
 					const typeData = await fetchJSON(`https://esi.evetech.net/latest/universe/types/${t_id}/`);
-					html += `<hr><p>Ship: ${typeData.name}</p>`;
-					html += `<p>Total Profit: ${totalProfit.toLocaleString()}</p>`;
-					html += `<p>Total Volume Remaining: ${totalVolumeRemaining}</p>`;
-					html += `<p>Min Price: ${minPrice.toLocaleString()}</p>`;
-					html += `<p>Max Price: ${maxPrice.toLocaleString()}</p>`;
+					html += `<hr><div class="ship-info">`;
+					html += `<div class="ship-icon"><img src="${shipIconUrl}" alt="${typeData.name} icon"></div>`;
+					html += `<div class="ship-details">`;
+					html += `<p class="ship-name">Ship: ${typeData.name}</p>`;
+					html += `<p class="total-profit">Total Profit: ${totalProfit.toLocaleString()}</p>`;
+					html += `<p class="volume-remaining">Total Volume Remaining: ${totalVolumeRemaining}</p>`;
+					html += `<p class="min-price">Min Price: ${minPrice.toLocaleString()}</p>`;
+					html += `<p class="max-price">Max Price: ${maxPrice.toLocaleString()}</p>`;
+					html += `</div>`;
+					html += `</div>`;
 				}
 			}
 
@@ -208,7 +218,5 @@
 		}
 	}
 
-
-
-	// Example usage:
-	// runner("the forge");
+	$("#fetchButton").click(fetchMarketData);
+});

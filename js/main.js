@@ -3,6 +3,9 @@ const config = {
 	ESI_USER_AGENT: "SHWRD++ (ruslan.musaev200121@gmail.com)"
 };
 
+const loadingSpinner = $("#loadingSpinner");
+loadingSpinner.hide();
+
 // function for fetching JSONs from EVE's ESI
 // options argument is used only once, in getCharacterInfo()
 // because https://esi.evetech.net/ui/#/Universe/post_universe_ids is a POST
@@ -41,6 +44,7 @@ $(document).ready(function() {
 	// Button click handler
 	$("#fetchCharacterInfoButton").on("click", function() {
 		getCharacterInfo();
+		loadingSpinner.show();
 	});
 
 	// Show character info section with animation
@@ -158,10 +162,11 @@ $(document).ready(function() {
 						<p id="characterTitles"><strong>Title(s):</strong> ${title}</p>
 					</div>
 					<div class="right-column">
-						<img id="corporationLogo" src="${corporationImageURL}" alt="${corporationData.name} Logo">
 						<p id="corporationName"><strong>Corporation:</strong><br> ${corporationURL ? `<a href="${corporationURL}" target="_blank">${corporationNameWithTicker}</a>` : `${corporationNameWithTicker}`}</p>
-						${allianceImageURL ? `<img id="allianceLogo" src="${allianceImageURL}" alt="${allianceName} Logo">` : ""}
+						<img id="corporationLogo" src="${corporationImageURL}" alt="${corporationData.name} Logo">
 						<p id="allianceName"><strong>Alliance:</strong><br> ${allianceNameWithTicker}</p>
+						${allianceImageURL ? `<img id="allianceLogo" src="${allianceImageURL}" alt="${allianceName} Logo">` : ""}
+						
 					</div>
 				</div>`);
 			showCharacterInfo();
@@ -169,6 +174,9 @@ $(document).ready(function() {
 		} catch (e) {
 			characterInfoDiv.html(`<p>Error fetching character info: ${e.message}</p>`);
 			showCharacterInfo();
+		}
+		finally {
+			loadingSpinner.hide();
 		}
 	}
 });
