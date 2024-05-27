@@ -1,10 +1,10 @@
 $(document).ready(function() {
-		// Animations for the header
+	// start setup, hiding stuff
 	$("#navheader").hide().slideDown(1000);
 
-	// Animations for main section
-	$("#mainSection").hide().fadeIn(2000);
-	
+	const statusElement = $("#status");
+	statusElement.hide();
+
 	const loadingSpinner = $("#loadingSpinner");
 	loadingSpinner.hide();
 
@@ -14,13 +14,14 @@ $(document).ready(function() {
 	};
 
 	const cache = {
-		getItem: (key) => JSON.parse(localStorage.getItem(key)),
-		setItem: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
-		hasKey: (key) => localStorage.getItem(key) !== null,
-		removeItem: (key) => localStorage.removeItem(key),
-		clear: () => localStorage.clear()
+		getItem: (key) => JSON.parse(localStorage.getItem(key)), // get item & parse it
+		setItem: (key, value) => localStorage.setItem(key, JSON.stringify(value)), // Stringify & set item
+		hasKey: (key) => localStorage.getItem(key) !== null, // Check if item exists
+		removeItem: (key) => localStorage.removeItem(key), // Remove item
+		clear: () => localStorage.clear() // Clear all local storage
 	};
 
+	// function for getting JSONs from EVE's ESI
 	async function fetchJSON(url) {
 		const response = await fetch(url, { 
 			headers: { 
@@ -33,25 +34,25 @@ $(document).ready(function() {
 		return await response.json();
 	}
 
+	// get market data based on the region input
 	async function fetchMarketData() {
 		const regionNameInput = $("#regionName").val();
 		const outputElement = $("#output");
-
-		outputElement.fadeOut().empty();
+		statusElement.hide();
+		outputElement.fadeOut();
 		loadingSpinner.show();
 
 		try {
-			const result = await runner(regionNameInput);
-			outputElement.html(result).fadeIn();
-		} 
-		catch (error) {
-			outputElement.html(`<p>Error: ${error.message}</p>`).fadeIn();
-		} 
-		finally {
+			await runner(regionNameInput);
+			outputElement.fadeIn();
+		} catch (error) {
+			statusElement.show().text("Error: " + error.message);
+		} finally {
 			loadingSpinner.hide();
 		}
 	}
 
+	// get market data from the ESI and cache it
 	async function getMarketData(cache, r_id) {
 		try {
 			const marketEndpoint = `https://esi.evetech.net/latest/markets/${r_id}/orders/?order_type=sell`;
@@ -85,12 +86,12 @@ $(document).ready(function() {
 					cache.setItem(`${r_id}_${m_id}`, sortedId);
 				});
 			}
-		} 
-		catch (e) {
+		} catch (e) {
 			console.error("Failed to fetch market data", e);
 		}
 	}
 
+	// get insurance data and cache it
 	async function getInsurance(cache) {
 		try {
 			const insuranceEndpoint = "https://esi.evetech.net/latest/insurance/prices/";
@@ -100,18 +101,18 @@ $(document).ready(function() {
 			data.forEach(val => {
 				val.levels.forEach(level => {
 					if (level.name === "Platinum") {
-						platinumLevels[val.type_id] = level;
+						platinumLevels[val.type_id] = level; // Store only Platinum insurance levels
 					}
 				});
 			});
 
 			cache.setItem("insurance_data", platinumLevels);
-		} 
-		catch (e) {
+		} catch (e) {
 			console.error("Failed to cache insurance data", e);
 		}
 	}
 
+	// get region data and cache it
 	async function getRegions(cache) {
 		try {
 			const regionsEndpoint = "https://esi.evetech.net/latest/universe/regions/";
@@ -120,18 +121,25 @@ $(document).ready(function() {
 			const regions = {};
 			const promises = regionIds.map(async (reg) => {
 				const regionData = await fetchJSON(`https://esi.evetech.net/latest/universe/regions/${reg}/`);
-				regions[regionData.region_id] = regionData.name;
+				regions[regionData.region_id] = regionData.name; // Map region ID to region name
 			});
 
 			await Promise.all(promises);
 			cache.setItem("regions", regions);
-		} 
-		catch (e) {
+		} catch (e) {
 			console.error("Failed to cache regions", e);
 		}
 	}
 
+	// get system name by system ID
+	async function getSystemName(systemId) {
+		const systemData = await fetchJSON(`https://esi.evetech.net/latest/universe/systems/${systemId}/`);
+		return systemData.name;
+	}
+
+	// Main function
 	async function runner(reg_name) {
+		statusElement.hide();
 		if (!cache.hasKey("insurance_data")) {
 			await getInsurance(cache);
 		}
@@ -149,8 +157,7 @@ $(document).ready(function() {
 			if (!r_id) {
 				throw new Error();
 			}
-		} 
-		catch (e) {
+		} catch (e) {
 			throw new Error("Unknown Region");
 		}
 
@@ -159,61 +166,78 @@ $(document).ready(function() {
 
 			const marketIds = cache.getItem(`${r_id}_market_ids`);
 			if (!marketIds || marketIds.length === 0) {
-				return "<p>No market data found for the specified region.</p>";
+				statusElement.show();
+				statusElement.text("No market data found for the specified region.");
+				return;
 			}
 
-			let profitableFound = false;
-			let html = "";
+			let mostProfitableShip = null;
+			let highestProfit = 0;
+
+			// Loop through market IDs to find the most profitable ship
 			for (const t_id of marketIds) {
 				let totalProfit = 0;
 				let totalVolumeRemaining = 0;
 				let minPrice = 0;
 				let maxPrice = 0;
+				let systemId = null;
 
 				const cached = cache.getItem(`${r_id}_${t_id}`);
 				if (!cached || cached.length === 0) {
-					html += `<p>No cached market data for type ID: ${t_id}</p>`;
+					statusElement.show();
+					statusElement.text("No cached market data for type ID: " + t_id);
 					continue;
 				}
 
 				minPrice = cached[0].price;
 
+				// Calculate total profit for the current ship
 				for (const item of cached) {
 					let profit = (cache.getItem("insurance_data")[t_id].payout - (item.price + cache.getItem("insurance_data")[t_id].cost));
 					profit *= item.volume_remain;
 					if (profit > 0) {
-						profitableFound = true;
 						totalProfit += profit;
 						totalVolumeRemaining += item.volume_remain;
 						maxPrice = item.price;
-					} 
-					else {
+						systemId = item.system_id;
+					} else {
 						break;
 					}
 				}
-				const shipIconUrl = `https://images.evetech.net/types/${t_id}/render`
-				if (totalProfit > 0) {
-					const typeData = await fetchJSON(`https://esi.evetech.net/latest/universe/types/${t_id}/`);
-					html += `<hr><div class="ship-info">`;
-					html += `<div class="ship-icon"><img src="${shipIconUrl}" alt="${typeData.name} icon"></div>`;
-					html += `<div class="ship-details">`;
-					html += `<p class="ship-name">Ship: ${typeData.name}</p>`;
-					html += `<p class="total-profit">Total Profit: ${totalProfit.toLocaleString()}</p>`;
-					html += `<p class="volume-remaining">Total Volume Remaining: ${totalVolumeRemaining}</p>`;
-					html += `<p class="min-price">Min Price: ${minPrice.toLocaleString()}</p>`;
-					html += `<p class="max-price">Max Price: ${maxPrice.toLocaleString()}</p>`;
-					html += `</div>`;
-					html += `</div>`;
+
+				// Update the most profitable ship if the current one is more profitable
+				if (totalProfit > highestProfit) {
+					highestProfit = totalProfit;
+					mostProfitableShip = {
+						type_id: t_id,
+						totalProfit,
+						totalVolumeRemaining,
+						minPrice,
+						maxPrice,
+						systemId
+					};
 				}
 			}
 
-			if (!profitableFound) {
-				return "<p>No profitable items in this Region</p>";
-			}
+			// Display ship info
+			if (mostProfitableShip) {
+				const { type_id, totalProfit, totalVolumeRemaining, minPrice, maxPrice, systemId } = mostProfitableShip;
+				const shipIconUrl = `https://images.evetech.net/types/${type_id}/render`;
+				const typeData = await fetchJSON(`https://esi.evetech.net/latest/universe/types/${type_id}/`);
+				const systemName = await getSystemName(systemId);
 
-			return html;
-		} 
-		catch (e) {
+				$("#shipImg").attr("src", shipIconUrl).attr("alt", typeData.name + " icon");
+				$(".shipName").text("Ship: " + typeData.name);
+				$(".totalProfit").text("Total Profit: " + totalProfit.toLocaleString());
+				$(".volumeRemaining").text("Total Volume Remaining: " + totalVolumeRemaining);
+				$(".minPrice").text("Min Price: " + minPrice.toLocaleString());
+				$(".maxPrice").text("Max Price: " + maxPrice.toLocaleString());
+				$(".systemName").text("System: " + systemName);
+			} else {
+				statusElement.show();
+				statusElement.text("No profitable items in this Region");
+			}
+		} catch (e) {
 			throw new Error("Failed to get market data");
 		}
 	}

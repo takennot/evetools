@@ -44,7 +44,6 @@ $(document).ready(function() {
 	// Button click handler
 	$("#fetchCharacterInfoButton").on("click", function() {
 		getCharacterInfo();
-		loadingSpinner.show();
 	});
 
 	// Show character info section with animation
@@ -63,13 +62,15 @@ $(document).ready(function() {
 	// first we take input from the user in the form of a character name (because they obviously don't know character ID)
 	// then we try to search with that name using /universe/ids/ (to get the character ID)
 	async function getCharacterInfo() {
+		loadingSpinner.show();
 		// setup variables
 		const characterName = $("#characterName").val();
 		const characterInfoDiv = $("#characterInfo");
-		characterInfoDiv.html("");
+		//characterInfoDiv.html("");
 		// if its empty
 		if (!characterName) {
-			characterInfoDiv.html("<p>Please enter a character name.</p>");
+			loadingSpinner.hide();
+			alert("Please enter a character name.");
 			showCharacterInfo();
 			return;
 		}
@@ -146,33 +147,24 @@ $(document).ready(function() {
 			const characterImageURL = `https://images.evetech.net/characters/${characterId}/portrait`;
 			const corporationImageURL = `https://images.evetech.net/corporations/${characterData.corporation_id}/logo`;
 			// set alliance image url only if its available
-			const allianceImageURL = allianceId !== "N/A" ? `https://images.evetech.net/alliances/${allianceId}/logo` : "";
+			const allianceImageURL = allianceId !== "N/A" ? `https://images.evetech.net/alliances/${allianceId}/logo` : "https://i.imgur.com/D3iXU7L.png";
 			// if corporationURL is a valid URL - name will be a link, otherwise just a text
 			// show alliance img only if its valid
-			characterInfoDiv.html(`
-				<div id="characterInfoDiv">
-					<div class="left-column">
-						<h2>Character Info</h2>
-						<img id="characterPortrait" src="${characterImageURL}" alt="${characterData.name} Portrait">
-						<p id="characterName"><strong>Name:</strong> ${characterData.name}</p>
-						<p id="characterBirthday"><strong>Birthday:</strong> ${new Date(characterData.birthday).toLocaleDateString()}</p>
-						<p id="characterGender"><strong>Gender:</strong> ${characterData.gender}</p>
-						<p id="characterRace"><strong>Race:</strong> ${characterRace}</p>
-						<p id="characterSecurityStatus"><strong>Security Status:</strong> ${securityStatus}</p>
-						<p id="characterTitles"><strong>Title(s):</strong> ${title}</p>
-					</div>
-					<div class="right-column">
-						<p id="corporationName"><strong>Corporation:</strong><br> ${corporationURL ? `<a href="${corporationURL}" target="_blank">${corporationNameWithTicker}</a>` : `${corporationNameWithTicker}`}</p>
-						<img id="corporationLogo" src="${corporationImageURL}" alt="${corporationData.name} Logo">
-						<p id="allianceName"><strong>Alliance:</strong><br> ${allianceNameWithTicker}</p>
-						${allianceImageURL ? `<img id="allianceLogo" src="${allianceImageURL}" alt="${allianceName} Logo">` : ""}
-						
-					</div>
-				</div>`);
+			$("#characterPortrait").attr("src", characterImageURL).attr("alt", characterData.name + " Portrait");
+			$("#characterNameText").text(characterData.name);
+			$("#characterBirthday").text(new Date(characterData.birthday).toLocaleDateString());
+			$("#characterGender").text(characterData.gender);
+			$("#characterRace").text(characterRace);
+			$("#characterSecurityStatus").text(securityStatus);
+			$("#characterTitles").text(title);
+			$("#corporationName").text(corporationNameWithTicker).attr("href", corporationURL);
+			$("#corporationLogo").attr("src", corporationImageURL).attr("alt", corporationData.name + " Logo");
+			$("#allianceName").text(allianceNameWithTicker);
+			$("#allianceLogo").attr("src", allianceImageURL).attr("alt", allianceName + " Logo");
 			showCharacterInfo();
 			animateCharacterInfo();
 		} catch (e) {
-			characterInfoDiv.html(`<p>Error fetching character info: ${e.message}</p>`);
+			$("characterNameText").text("Error fetching character info: " + e.message);
 			showCharacterInfo();
 		}
 		finally {

@@ -219,7 +219,7 @@ button:hover {
 	justify-content: space-between;
 }
 
-.character-info {
+.characterInfo {
 	flex: 1 1 50%;
 	padding: 10px;
 	box-sizing: border-box;
@@ -237,13 +237,13 @@ button:hover {
 	text-align: left;
 }
 
-.left-column {
+.leftColumn {
 	flex: 1 1 60%;
 	padding: 10px;
 	box-sizing: border-box;
 }
 
-.right-column {
+.rightColumn {
 	flex: 1 1 40%;
 	padding: 10px;
 	box-sizing: border-box;
@@ -252,7 +252,7 @@ button:hover {
 	align-items: flex-end;
 }
 
-.right-column img {
+.rightColumn img {
 	max-width: 100%;
 	height: auto;
 	display: block;
@@ -263,7 +263,7 @@ button:hover {
 	background-color: #fff;
 }
 
-.right-column p {
+.rightColumn p {
 	text-align: left;
 	overflow: hidden;
 	text-overflow: ellipsis;

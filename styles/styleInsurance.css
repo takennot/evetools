@@ -176,7 +176,7 @@ footer {
 	color: white;
 }
 
-.ship-info {
+.shipInfo {
 	display: flex;
 	align-items: center;
 	background-color: #6B12A6;
@@ -185,19 +185,19 @@ footer {
 	margin-bottom: 20px;
 }
 
-.ship-icon img {
+.shipIcon img {
 	margin-right: 10px;
 }
 
-.ship-details {
+.shipDetails {
 	flex-grow: 1;
 }
 
-.ship-name {
+.shipName {
 	color: #ffffff;
 	font-weight: bold;
 }
 
-.total-profit, .volume-remaining, .min-price, .max-price {
+.totalProfit, .volumeRemaining, .minPrice, .maxPrice {
 	color: #ffffff;
 }

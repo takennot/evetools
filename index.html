@@ -29,12 +29,35 @@
 				<h1>EVE Online Character Info</h1>
 			</header>
 			<article>
-                <input type="text" id="characterName" placeholder="Enter Character Name">
-                <button id="fetchCharacterInfoButton">Get Character Info</button>
-                	<div id="loadingSpinner">
+				<input type="text" id="characterName" placeholder="Enter Character Name">
+				<button id="fetchCharacterInfoButton">Get Character Info</button>
+					<div id="loadingSpinner">
 						<div class="spinner"></div>
 					</div>
-                <div id="characterInfo"></div>
+				<div id="characterInfo">
+					<div id="characterInfoDiv">
+						<div class="leftColumn">
+							<h2>Character Info</h2>
+							<img id="characterPortrait" src="https://i.imgur.com/lftAQzu.png" alt="Character Portrait">
+							<p><strong>Name: </strong><span id="characterNameText"></span></p>
+							<p><strong>Birthday: </strong><span id="characterBirthday"></span></p>
+							<p><strong>Gender: </strong><span id="characterGender"></span></p>
+							<p><strong>Race: </strong><span id="characterRace"></span></p>
+							<p><strong>Security Status: </strong><span id="characterSecurityStatus"></span></p>
+							<p><strong>Title(s): </strong><span id="characterTitles"></span></p>
+						</div>
+						<div class="rightColumn">
+							<p><strong>Corporation:</strong>
+							<br>
+							<a href="${corporationURL}" target="_blank" id="corporationName"></a></p>
+							<img id="corporationLogo" src="https://i.imgur.com/lftAQzu.png" alt="${corporationData.name} Logo">
+							<p><strong>Alliance:</strong>
+							<br>
+							<span id="allianceName"></span></p>
+							<img id="allianceLogo" src="https://i.imgur.com/lftAQzu.png" alt="${allianceName} Logo">
+						</div>
+					</div>
+				</div>
 			</article>
 		</section>
 	</main>

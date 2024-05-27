@@ -18,7 +18,7 @@
 	</header>
 	<h1>Insurance Fraud</h1>
 	<p>Warning: This is a tool to help you find opportunities to commit insurance fraud <mark>IN-GAME</mark></p>
-	<p>Warning 2: If you dont see the copyright notice aka footer, it means that <mark>you can scroll down!</mark></p>
+	<p>Warning 2: It shows only <mark>one</mark> ship, the most profitable one. </p>
 	<p>It can get pretty slow so have some patience!</p>
 	<p>Credits to <a id="srcLink" href="https://github.com/skiedude/Eve-Insurance-Fraud" target="_blank">skiedude</a> for code that I ported to JS & styled</p>
 	<details>
@@ -37,7 +37,23 @@
 	<input list="regions" type="text" id="regionName" placeholder="Region Name">
 	<button id="fetchButton">Fetch Market Data</button>
 
-	<div id="output"></div>
+	<div id="output">
+		<hr>
+		<div class="shipInfo">
+			<div class="shipIcon">
+				<img id="shipImg" src="https://i.imgur.com/lftAQzu.png" alt="Ship Icon">
+			</div>
+			<div class="shipDetails">
+				<p id="status"></p>
+				<p class="shipName">Ship: </p>
+				<p class="totalProfit">Total Profit: </p>
+				<p class="volumeRemaining">Total Volume Remaining: </p>
+				<p class="minPrice">Min Price: </p>
+				<p class="maxPrice">Max Price: </p>
+				<p class="systemName">System: </p>
+			</div>
+		</div>
+	</div>
 	<div id="loadingSpinner">
 		<div class="spinner"></div>
 	</div>
