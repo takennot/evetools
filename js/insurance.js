@@ -168,6 +168,13 @@ $(document).ready(function() {
 			if (!marketIds || marketIds.length === 0) {
 				statusElement.show();
 				statusElement.text("No market data found for the specified region.");
+				$("#shipImg").attr("src", "https://i.imgur.com/D3iXU7L.png").attr("alt", "error icon");
+				$(".shipName").text("Ship: ");
+				$(".totalProfit").text("Total Profit: ");
+				$(".volumeRemaining").text("Total Volume Remaining: ");
+				$(".minPrice").text("Min Price: ");
+				$(".maxPrice").text("Max Price: ");
+				$(".systemName").text("System: ");
 				return;
 			}
 
@@ -186,6 +193,13 @@ $(document).ready(function() {
 				if (!cached || cached.length === 0) {
 					statusElement.show();
 					statusElement.text("No cached market data for type ID: " + t_id);
+					$("#shipImg").attr("src", "https://i.imgur.com/D3iXU7L.png").attr("alt", "error icon");
+					$(".shipName").text("Ship: ");
+					$(".totalProfit").text("Total Profit: ");
+					$(".volumeRemaining").text("Total Volume Remaining: ");
+					$(".minPrice").text("Min Price: ");
+					$(".maxPrice").text("Max Price: ");
+					$(".systemName").text("System: ");
 					continue;
 				}
 
